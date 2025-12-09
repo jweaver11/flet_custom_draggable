@@ -39,24 +39,24 @@ class CustomDraggableControl extends StatelessWidget {
           ))
         : Text(title);
 
-    // Text style for the feedback text during dragging
-    final textStyle = Theme.of(context)
-        .textTheme
-        .titleMedium
-        ?.copyWith(decoration: TextDecoration.none);
+    // Get "content_feedback" child controls
+    final feedbackCtrls =
+        children.where((c) => c.name == "content_feedback" && c.isVisible);
+
+    // Turn first "content_feedback" control into a Widget
+    final Widget feedback = feedbackCtrls.isNotEmpty
+        ? (createControl(
+            control, // parent
+            feedbackCtrls.first.id, // <- child control id (String)
+            control.isDisabled, // <- parentDisabled (or false if you prefer)
+          ))
+        : Text(title);
 
     // The build we return
     return Draggable(
-      data: data,
-      feedback: Material(
-        // make it use Material/Theme in the overlay
-        color: Colors.transparent,
-        child: Text(
-          title,
-          style: textStyle, // themed, no underline
-        ),
-      ),
-      child: child,
+      data: data, // Set our data
+      feedback: feedback,
+      child: child, // Set the content passed in that we defined earlier
       onDragStarted: () => backend.triggerControlEvent(
         control.id, // <- String, not Control
         "drag_start", // event name

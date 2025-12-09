@@ -17,7 +17,6 @@ class CustomDraggable(ConstrainedControl):
 
     def __init__(
         self,
-        content: Control | None = None,
         #
         # All flet controls 
         #
@@ -36,8 +35,10 @@ class CustomDraggable(ConstrainedControl):
         # Anything custom we want to pass in (Custom Draggable specific)
         #
         group: str = "",
+        title: str = "Drag Me",             # Title we're gonna format in the widget
         on_drag_start = None, 
         on_drag_cancel = None,
+        content: Control | None = None,     # Content to be displayed inside the widget
     ):
         
         # Sets all our default controls values and properties to those of the constrained control
@@ -57,19 +58,15 @@ class CustomDraggable(ConstrainedControl):
         # Our properties and setters are automatically called when we set them here
 
         self.group = group
+        self.title = title
 
         self.on_drag_start = on_drag_start
         self.on_drag_cancel = on_drag_cancel
 
         # single logical child control
         self.__content: Control | None = content
+        self.__content_feedback: Control | None = None
         
-
-        # We just build this in flutter
-        #self.content_feedback = content_feedback
-
-
-
 
     # Returns the name of our control. 
     def _get_control_name(self):
@@ -85,6 +82,15 @@ class CustomDraggable(ConstrainedControl):
     @group.setter
     def group(self, value: str):
         self._set_attr("group", value)
+
+    ''' Title property for the draggable '''
+    @property
+    def title(self) -> str:
+        return self._get_attr("title")
+    
+    @title.setter
+    def title(self, value: str):
+        self._set_attr("title", value)
 
 
     ''' Event handler for the drag start event '''
@@ -117,13 +123,25 @@ class CustomDraggable(ConstrainedControl):
     def content(self, value: Control):
         self.__content = value
 
+    ''' Content feedback property for the draggable '''
+    @property
+    def content_feedback(self) -> Control:
+        # stored locally; returned as a named child via _get_children()
+        return self.__content_feedback
+    
+    @content_feedback.setter
+    def content_feedback(self, value: Control):
+        self.__content_feedback = value
+
     def _get_children(self):
         children = []
         if self.__content:
             self.__content._set_attr_internal("n", "content")
             children.append(self.__content)
+        if self.__content_feedback:
+            self.__content_feedback._set_attr_internal("n", "content_feedback")
+            children.append(self.__content_feedback)
         return children
-
     
 
 

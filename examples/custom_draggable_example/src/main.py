@@ -14,7 +14,6 @@ if src_dir not in sys.path:
 
 from custom_draggable.custom_draggable import CustomDraggable  # <- use local file
 
-
 def main(page: ft.Page):
 
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -30,7 +29,9 @@ def main(page: ft.Page):
             content=CustomDraggable(
                 content=ft.Container(content=ft.Row([ft.Icon(ft.Icons.DRAG_HANDLE), ft.Text("Drag me plez")]), bgcolor=ft.Colors.with_opacity(.1, "red")),
                 group="Group 1",    
-                data="Title 1",  
+                data="Data 1", 
+                title="Title 1", 
+                content_feedback=ft.Text("I'm being dragged!"),
                 on_drag_start=on_drag_start,
                 on_drag_cancel=lambda e: print("Drag 1 cancelled!"),
             ),
@@ -42,7 +43,8 @@ def main(page: ft.Page):
                 content=ft.Text("Drag me 2 plez"),
                 group="Group 2",    
                 data={'title': 'Title 2'},  
-                
+                title="Title 2",
+                content_feedback=ft.TextButton("I'm dragging too!"),
                 on_drag_start=lambda e: print("Drag started event received for Title 2!"),
                 on_drag_cancel=lambda e: print("Drag 2 cancelled!"),
             ),
