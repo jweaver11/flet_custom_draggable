@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class CustomDraggableControl extends StatelessWidget {
   final Control? parent;
   final Control control;
+  final List<Control> children;
   final FletControlBackend backend;
 
   // Receives control data from flet
@@ -14,6 +15,7 @@ class CustomDraggableControl extends StatelessWidget {
     super.key,
     required this.parent,
     required this.control,
+    required this.children,
     required this.backend,
   });
 
@@ -24,9 +26,18 @@ class CustomDraggableControl extends StatelessWidget {
     dynamic data = control.attrString("data", "")!;
     String title = control.attrString("title", "Drag Me")!;
 
-    // Bool checks to see if we have the event handlers for drag start and cancel
-    final hasOnDragStart = control.attrBool("onDragStart", false) ?? false;
-    final hasOnDragCancel = control.attrBool("onDragCancel", false) ?? false;
+    // Get "content" child controls
+    final contentCtrls =
+        children.where((c) => c.name == "content" && c.isVisible);
+
+    // Turn first "content" control into a Widget
+    final Widget child = contentCtrls.isNotEmpty
+        ? (createControl(
+            control, // parent
+            contentCtrls.first.id, // <- child control id (String)
+            control.isDisabled, // <- parentDisabled (or false if you prefer)
+          ))
+        : Text(title);
 
     // Text style for the feedback text during dragging
     final textStyle = Theme.of(context)
@@ -45,23 +56,17 @@ class CustomDraggableControl extends StatelessWidget {
           style: textStyle, // themed, no underline
         ),
       ),
-      child: Container(
-          child: Text(title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-      onDragStarted: hasOnDragStart
-          ? () => backend.triggerControlEvent(
-                control.id, // <- String, not Control
-                "drag_start", // event name
-                "",
-              )
-          : null,
-      onDraggableCanceled: hasOnDragCancel
-          ? (velocity, offset) => backend.triggerControlEvent(
-                control.id,
-                "drag_cancel",
-                "",
-              )
-          : null,
+      child: child,
+      onDragStarted: () => backend.triggerControlEvent(
+        control.id, // <- String, not Control
+        "drag_start", // event name
+        "",
+      ),
+      onDraggableCanceled: (velocity, offset) => backend.triggerControlEvent(
+        control.id,
+        "drag_cancel",
+        "",
+      ),
     );
   }
 }

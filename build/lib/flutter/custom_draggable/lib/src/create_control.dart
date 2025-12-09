@@ -10,6 +10,7 @@ CreateControlFactory createControl = (CreateControlArgs args) {
       return CustomDraggableControl(
         parent: args.parent,
         control: args.control,
+        children: args.children,
         backend: args.backend,
       );
     default:

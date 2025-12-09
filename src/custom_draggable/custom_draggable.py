@@ -6,7 +6,9 @@ Actual definition of the control. This gives default control values and a contro
 from typing import Any, Optional
 
 from flet.core.constrained_control import ConstrainedControl
+from flet.core.control import Control
 from flet.core.control import OptionalNumber
+
 
 class CustomDraggable(ConstrainedControl):
     """
@@ -15,8 +17,7 @@ class CustomDraggable(ConstrainedControl):
 
     def __init__(
         self,
-        title: str,
-        group: str,
+        content: Control | None = None,
         #
         # All flet controls 
         #
@@ -32,8 +33,9 @@ class CustomDraggable(ConstrainedControl):
         right: OptionalNumber = None,
         bottom: OptionalNumber = None,
         #
-        # Anything custom we want to pass in (Fletty specific)
-        #,
+        # Anything custom we want to pass in (Custom Draggable specific)
+        #
+        group: str = "",
         on_drag_start = None, 
         on_drag_cancel = None,
     ):
@@ -55,14 +57,16 @@ class CustomDraggable(ConstrainedControl):
         # Our properties and setters are automatically called when we set them here
 
         self.group = group
-        self.title = title
 
         self.on_drag_start = on_drag_start
         self.on_drag_cancel = on_drag_cancel
 
-        # We just build this in flutter, since it just needs our title
+        # single logical child control
+        self.__content: Control | None = content
+        
+
+        # We just build this in flutter
         #self.content_feedback = content_feedback
-        #self.content = content
 
 
 
@@ -71,9 +75,10 @@ class CustomDraggable(ConstrainedControl):
     def _get_control_name(self):
         return "custom_draggable"
     
+
     # Need to declare and set our properties here so that flutter can access them
     
-
+    ''' Group property for the draggable '''
     @property
     def group(self) -> str:
         return self._get_attr("group")
@@ -82,32 +87,45 @@ class CustomDraggable(ConstrainedControl):
         self._set_attr("group", value)
 
 
-    @property
-    def title(self) -> str:
-        return self._get_attr("title")
-    @title.setter
-    def title(self, value: str):
-        self._set_attr("title", value)
-
-
-
+    ''' Event handler for the drag start event '''
     @property
     def on_drag_start(self):
         return self._get_event_handler("drag_start")
+    
     @on_drag_start.setter
     def on_drag_start(self, handler):
-        # this flag is what Flutter reads as "onDragStart"
-        self._set_attr("onDragStart", True if handler is not None else None)
         self._add_event_handler("drag_start", handler)
 
+
+    ''' Event handler for the drag cancel event '''
     @property
     def on_drag_cancel(self):
         return self._get_event_handler("drag_cancel")   
+    
     @on_drag_cancel.setter
     def on_drag_cancel(self, handler):
-        # this flag is what Flutter reads as "onDragCancel"
-        self._set_attr("onDragCancel", True if handler is not None else None)
         self._add_event_handler("drag_cancel", handler)
+
+
+    ''' Content property for the draggable '''
+    @property
+    def content(self) -> Control:
+        # stored locally; returned as a named child via _get_children()
+        return self.__content
+
+    @content.setter
+    def content(self, value: Control):
+        self.__content = value
+
+    def _get_children(self):
+        children = []
+        if self.__content:
+            self.__content._set_attr_internal("n", "content")
+            children.append(self.__content)
+        return children
+
+    
+
 
    
 
