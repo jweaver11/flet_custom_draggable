@@ -11,7 +11,7 @@ Link to git repository:
 
 ```
 dependencies = [
-  "custom-draggable @ git+https://github.com/MyGithubAccount/custom-draggable",
+  "custom-draggable @ git+https://github.com/jweaver11/custom-draggable",
   "flet>=0.28.3",
 ]
 ```
