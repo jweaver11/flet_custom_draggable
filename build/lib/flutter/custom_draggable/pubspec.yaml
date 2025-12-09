@@ -1,0 +1,20 @@
+name: custom_draggable
+description: Flet CustomDraggable control
+repository: https://github.com/MyGithubAccount/custom-draggable/src/flutter/custom_draggable
+version: 0.1.0
+homepage: https://github.com/MyGithubAccount/custom-draggable
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flet: 0.28.3
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  

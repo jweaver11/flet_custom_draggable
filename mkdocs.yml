@@ -1,0 +1,7 @@
+site_name: CustomDraggable
+
+theme:
+  name: "material"
+
+plugins:
+  - mkdocstrings
