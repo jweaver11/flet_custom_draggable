@@ -37,6 +37,7 @@ class CustomDraggable(ConstrainedControl):
         group: str = "",
         title: str = "Drag Me",             # Title we're gonna format in the widget
         on_drag_start = None, 
+        on_drag_end = None,
         on_drag_cancel = None,
         content: Control | None = None,     # Content to be displayed inside the widget
         content_feedback: Control | None = None,  # Content to be displayed when dragging
@@ -63,8 +64,9 @@ class CustomDraggable(ConstrainedControl):
 
         self.on_drag_start = on_drag_start
         self.on_drag_cancel = on_drag_cancel
+        self.on_drag_end = on_drag_end
 
-        # single logical child control
+        # 
         self.__content: Control | None = content
         self.__content_feedback: Control | None = content_feedback
         
@@ -102,6 +104,15 @@ class CustomDraggable(ConstrainedControl):
     @on_drag_start.setter
     def on_drag_start(self, handler):
         self._add_event_handler("drag_start", handler)
+
+    ''' Event handler for the drag end event '''
+    @property
+    def on_drag_end(self):
+        return self._get_event_handler("drag_end")
+    
+    @on_drag_end.setter
+    def on_drag_end(self, handler):
+        self._add_event_handler("drag_end", handler)
 
 
     ''' Event handler for the drag cancel event '''

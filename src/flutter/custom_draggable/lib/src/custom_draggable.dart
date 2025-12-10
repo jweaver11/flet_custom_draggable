@@ -1,5 +1,5 @@
-// Defines our FlettyControl that is passed into flutter when flet encounters the 'fletty' control type.
-
+// Defines our CustomDraggableControl that is passed into flutter when flet encounters the 'fletty' control type.
+import 'dart:convert';
 import 'package:flet/flet.dart';
 import 'package:flutter/material.dart';
 
@@ -24,8 +24,16 @@ class CustomDraggableControl extends StatelessWidget {
   Widget build(BuildContext context) {
     // Set our data. Simple attributes are ez
     dynamic data = control.attrString("data", "")!;
-    String group = control.attrString("group", "")!;
     String title = control.attrString("title", "Drag Me")!;
+    String group = control.attrString("group", "")!;
+
+    // This is what Flet's DragTarget will see as `e.data`
+    final String dragPayload = jsonEncode({
+      "src_id":
+          control.id, // must match your Python `event_data["src_id"]` usage
+      "group": group,
+      "data": data,
+    });
 
     // Get "content" child controls
     final contentCtrls =
@@ -55,19 +63,36 @@ class CustomDraggableControl extends StatelessWidget {
 
     // The build we return
     return Draggable(
-      data: data, // Set our data
+      data: dragPayload, // Set our data
       feedback: feedback,
       child: child, // Set the content passed in that we defined earlier
+
       onDragStarted: () => backend.triggerControlEvent(
         control.id, // <- String, not Control
         "drag_start", // event name
         "",
       ),
-      onDraggableCanceled: (velocity, offset) => backend.triggerControlEvent(
-        control.id,
-        "drag_cancel",
-        "",
-      ),
+
+      onDragEnd: (details) {
+        // Distinguish accepted vs. cancelled using Flutter's info
+        final payload = jsonEncode({
+          "wasAccepted": details.wasAccepted,
+          "offsetX": details.offset.dx,
+          "offsetY": details.offset.dy,
+        });
+
+        if (details.wasAccepted) {
+          backend.triggerControlEvent(control.id, "drag_end", payload);
+        } else {
+          backend.triggerControlEvent(control.id, "drag_cancel", payload);
+        }
+      },
+      // You can keep this or remove it; `onDragEnd` already covers cancel
+      //onDraggableCanceled: (velocity, offset) => backend.triggerControlEvent(
+      //control.id,
+      //"drag_cancel",
+      //"",
+      //),
     );
   }
 }
