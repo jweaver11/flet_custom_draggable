@@ -37,8 +37,9 @@ class CustomDraggable(ConstrainedControl):
         group: str = "",
         title: str = "Drag Me",             # Title we're gonna format in the widget
         on_drag_start = None, 
-        on_drag_end = None,
+        on_drag_complete = None,
         on_drag_cancel = None,
+        on_drag_end = None,
         content: Control | None = None,     # Content to be displayed inside the widget
         content_feedback: Control | None = None,  # Content to be displayed when dragging
     ):
@@ -62,9 +63,11 @@ class CustomDraggable(ConstrainedControl):
         self.group = group
         self.title = title
 
-        self.on_drag_start = on_drag_start
-        self.on_drag_cancel = on_drag_cancel
-        self.on_drag_end = on_drag_end
+        # Event handlers
+        self.on_drag_start = on_drag_start      # Start of all drags
+        self.on_drag_cancel = on_drag_cancel    # Drag dropped outside of a target or over a target that doesn't accept it
+        self.on_drag_complete = on_drag_complete    # Drag dropped over a target that accepts it
+        self.on_drag_end = on_drag_end              # Always called when any drag ends
 
         # 
         self.__content: Control | None = content
@@ -82,9 +85,11 @@ class CustomDraggable(ConstrainedControl):
     @property
     def group(self) -> str:
         return self._get_attr("group")
+    
     @group.setter
     def group(self, value: str):
         self._set_attr("group", value)
+
 
     ''' Title property for the draggable '''
     @property
@@ -105,15 +110,6 @@ class CustomDraggable(ConstrainedControl):
     def on_drag_start(self, handler):
         self._add_event_handler("drag_start", handler)
 
-    ''' Event handler for the drag end event '''
-    @property
-    def on_drag_end(self):
-        return self._get_event_handler("drag_end")
-    
-    @on_drag_end.setter
-    def on_drag_end(self, handler):
-        self._add_event_handler("drag_end", handler)
-
 
     ''' Event handler for the drag cancel event '''
     @property
@@ -123,6 +119,26 @@ class CustomDraggable(ConstrainedControl):
     @on_drag_cancel.setter
     def on_drag_cancel(self, handler):
         self._add_event_handler("drag_cancel", handler)
+
+
+    ''' Event handler for the drag complete event '''
+    @property
+    def on_drag_complete(self):
+        return self._get_event_handler("drag_complete")
+    
+    @on_drag_complete.setter
+    def on_drag_complete(self, handler):
+        self._add_event_handler("drag_complete", handler)
+
+    
+    ''' Event handler for the drag end event '''
+    @property
+    def on_drag_end(self):
+        return self._get_event_handler("drag_end")
+    
+    @on_drag_end.setter
+    def on_drag_end(self, handler):
+        self._add_event_handler("drag_end", handler)
 
 
     ''' Content property for the draggable '''

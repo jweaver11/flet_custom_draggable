@@ -61,38 +61,46 @@ class CustomDraggableControl extends StatelessWidget {
           ))
         : Text(title);
 
-    // The build we return
-    return Draggable(
+    Widget myControl = Draggable(
       data: dragPayload, // Set our data
-      feedback: feedback,
+      feedback: feedback, // Set our feedback control
       child: child, // Set the content passed in that we defined earlier
 
-      onDragStarted: () => backend.triggerControlEvent(
-        control.id, // <- String, not Control
-        "drag_start", // event name
-        "",
-      ),
+      onDragStarted: () {
+        print("CustomDraggableControl.onDragStarted");
+
+        backend.triggerControlEvent(control.id, "drag_start", "");
+      },
 
       onDragEnd: (details) {
-        // Distinguish accepted vs. cancelled using Flutter's info
         final payload = jsonEncode({
           "wasAccepted": details.wasAccepted,
           "offsetX": details.offset.dx,
           "offsetY": details.offset.dy,
         });
 
-        if (details.wasAccepted) {
-          backend.triggerControlEvent(control.id, "drag_end", payload);
-        } else {
-          backend.triggerControlEvent(control.id, "drag_cancel", payload);
-        }
+        backend.triggerControlEvent(control.id, "drag_end", payload);
       },
-      // You can keep this or remove it; `onDragEnd` already covers cancel
-      //onDraggableCanceled: (velocity, offset) => backend.triggerControlEvent(
-      //control.id,
-      //"drag_cancel",
-      //"",
-      //),
+
+      // Only when *not* accepted by any DragTarget
+      onDraggableCanceled: (velocity, offset) {
+        print("CustomDraggableControl.onDraggableCanceled offset=$offset");
+        final payload = jsonEncode({
+          "offsetX": offset.dx,
+          "offsetY": offset.dy,
+        });
+
+        backend.triggerControlEvent(control.id, "drag_cancel", payload);
+      },
+
+      // Only when dropped on an accepting DragTarget
+      onDragCompleted: () {
+        print("CustomDraggableControl.onDragCompleted");
+        backend.triggerControlEvent(control.id, "drag_complete", "");
+      },
     );
+
+    // The build we return
+    return constrainedControl(context, myControl, parent, control);
   }
 }
