@@ -39,6 +39,7 @@ class CustomDraggable(ConstrainedControl):
         on_drag_start = None, 
         on_drag_cancel = None,
         content: Control | None = None,     # Content to be displayed inside the widget
+        content_feedback: Control | None = None,  # Content to be displayed when dragging
     ):
         
         # Sets all our default controls values and properties to those of the constrained control
@@ -65,7 +66,7 @@ class CustomDraggable(ConstrainedControl):
 
         # single logical child control
         self.__content: Control | None = content
-        self.__content_feedback: Control | None = None
+        self.__content_feedback: Control | None = content_feedback
         
 
     # Returns the name of our control. 

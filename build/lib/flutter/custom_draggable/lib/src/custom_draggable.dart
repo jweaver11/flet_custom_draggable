@@ -24,6 +24,7 @@ class CustomDraggableControl extends StatelessWidget {
   Widget build(BuildContext context) {
     // Set our data. Simple attributes are ez
     dynamic data = control.attrString("data", "")!;
+    String group = control.attrString("group", "")!;
     String title = control.attrString("title", "Drag Me")!;
 
     // Get "content" child controls
