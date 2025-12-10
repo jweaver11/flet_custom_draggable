@@ -25,7 +25,7 @@ def main(page: ft.Page):
 
     page.add( 
         ft.Container(
-            height=350, width=300, alignment = ft.alignment.center, bgcolor=ft.Colors.PURPLE_200, 
+            expand=1, alignment = ft.alignment.center, bgcolor=ft.Colors.PURPLE_200, 
             content=CustomDraggable(
                 content=ft.Container(content=ft.Row([ft.Icon(ft.Icons.DRAG_HANDLE), ft.Text("Drag me plez")]), bgcolor=ft.Colors.with_opacity(.1, "red")),
                 group="Group 1",    
@@ -34,21 +34,47 @@ def main(page: ft.Page):
                 content_feedback=ft.Text("I'm being dragged!"),
                 on_drag_start=on_drag_start,
                 on_drag_cancel=lambda e: print("Drag 1 cancelled!"),
+                on_drag_end=lambda e: print("Drag 1 ended!")
             ),
         ),
 
         ft.Container(
-            height=350, width=300, alignment = ft.alignment.center, bgcolor=ft.Colors.BLUE_200, 
+            expand=1, alignment = ft.alignment.center, bgcolor=ft.Colors.BLUE_200, 
             content=CustomDraggable(
-                content=ft.Text("Drag me 2 plez"),
+                content=ft.Text("Draggable 2"),
                 group="Group 2",    
                 data={'title': 'Title 2'},  
                 title="Title 2",
                 content_feedback=ft.TextButton("I'm dragging too!"),
                 on_drag_start=lambda e: print("Drag started event received for Title 2!"),
                 on_drag_cancel=lambda e: print("Drag 2 cancelled!"),
+                on_drag_end=lambda e: print("Drag 2 ended!")
             ),
         ),
+
+        ft.Row(
+            #height=100,
+            expand=True,
+            controls=[
+                ft.DragTarget(
+                    group="Group 1",
+                    content=ft.Container(
+                        expand=1, alignment = ft.alignment.center, bgcolor=ft.Colors.GREEN_200, 
+                        content=ft.Text("Drop here (Group 1)"),
+                    ),
+                    on_will_accept=lambda e: print("Will accept drag for Group 1") or True,
+                    on_accept=lambda e: print(f"Accepted drag with data: {e.data}"),
+                ),
+                ft.DragTarget(
+                    group="Group 2",
+                    content=ft.Container(
+                        expand=1, alignment = ft.alignment.center, bgcolor=ft.Colors.ORANGE_200, 
+                        content=ft.Text("Drop here (Group 2)"),
+                    ),
+                    on_will_accept=lambda e: print("Will accept drag for Group 2") or True,
+                    on_accept=lambda e: print(f"Accepted drag with data: {e.data}"),
+                ),
+        ])
 
     ) 
 
