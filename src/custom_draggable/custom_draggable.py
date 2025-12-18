@@ -70,8 +70,8 @@ class CustomDraggable(ConstrainedControl):
         self.on_drag_end = on_drag_end              # Always called when any drag ends
 
         # 
-        self.__content: Control | None = content
-        self.__content_feedback: Control | None = content_feedback
+        self._content: Control | None = content
+        self._content_feedback: Control | None = content_feedback
         
 
     # Returns the name of our control. 
@@ -145,30 +145,30 @@ class CustomDraggable(ConstrainedControl):
     @property
     def content(self) -> Control:
         # stored locally; returned as a named child via _get_children()
-        return self.__content
+        return self._content
 
     @content.setter
     def content(self, value: Control):
-        self.__content = value
+        self._content = value
 
     ''' Content feedback property for the draggable '''
     @property
     def content_feedback(self) -> Control:
         # stored locally; returned as a named child via _get_children()
-        return self.__content_feedback
+        return self._content_feedback
     
     @content_feedback.setter
     def content_feedback(self, value: Control):
-        self.__content_feedback = value
+        self._content_feedback = value
 
     def _get_children(self):
         children = []
-        if self.__content:
-            self.__content._set_attr_internal("n", "content")
-            children.append(self.__content)
-        if self.__content_feedback:
-            self.__content_feedback._set_attr_internal("n", "content_feedback")
-            children.append(self.__content_feedback)
+        if self._content:
+            self._content._set_attr_internal("n", "content")
+            children.append(self._content)
+        if self._content_feedback:
+            self._content_feedback._set_attr_internal("n", "content_feedback")
+            children.append(self._content_feedback)
         return children
     
 
