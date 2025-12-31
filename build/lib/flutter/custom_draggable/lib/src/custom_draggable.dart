@@ -67,8 +67,6 @@ class CustomDraggableControl extends StatelessWidget {
       child: child, // Set the content passed in that we defined earlier
 
       onDragStarted: () {
-        print("CustomDraggableControl.onDragStarted");
-
         backend.triggerControlEvent(control.id, "drag_start", "");
       },
 
@@ -84,18 +82,15 @@ class CustomDraggableControl extends StatelessWidget {
 
       // Only when *not* accepted by any DragTarget
       onDraggableCanceled: (velocity, offset) {
-        print("CustomDraggableControl.onDraggableCanceled offset=$offset");
         final payload = jsonEncode({
           "offsetX": offset.dx,
           "offsetY": offset.dy,
         });
-
         backend.triggerControlEvent(control.id, "drag_cancel", payload);
       },
 
       // Only when dropped on an accepting DragTarget
       onDragCompleted: () {
-        print("CustomDraggableControl.onDragCompleted");
         backend.triggerControlEvent(control.id, "drag_complete", "");
       },
     );
